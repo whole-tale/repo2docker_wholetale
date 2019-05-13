@@ -2,6 +2,10 @@
 
 """Top-level package for repo2docker-wholetale."""
 
+from .rocker import RockerWTStackBuildPack
+from .jupyter import JupyterWTStackBuildPack
+
+
 __author__ = """Kacper Kowalik"""
 __email__ = 'xarthisius.kk@gmail.com'
 __version__ = '0.0.1'
