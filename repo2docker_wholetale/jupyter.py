@@ -37,17 +37,13 @@ class JupyterWTStackBuildPack(PythonBuildPack):
     def get_build_script_files(self):
         """Dict of files to be copied to the container image for use in building
         """
-        files = {
+        files = {}
+        for k, v in {
             "base/healthcheck.py": "/healthcheck.py",
             "iframes/custom.js": "/home/jovyan/.jupyter/custom/custom.js",
             "iframes/jupyter_notebook_config.py": "/home/jovyan/.jupyter/jupyter_notebook_config.py",
-        }
+        }.items():
+            files[os.path.join(os.path.dirname(__file__), k)] = v
+
         files.update(super().get_build_script_files())
         return files
-
-    def add_files_to_docker_context(self, tar, filter=None):
-        for src in sorted(self.get_build_script_files()):
-            src_parts = src.split('/')
-            src_path = os.path.join(os.path.dirname(__file__), *src_parts)
-            if os.path.isfile(src_path):
-                tar.add(src_path, src, filter=filter)

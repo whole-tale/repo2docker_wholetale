@@ -19,11 +19,11 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         # Use bash as default shell, rather than sh
         ENV SHELL /bin/bash
 
-        # Set up user
+        # Set up user and repo_dir (not used in this template)
         ARG NB_USER
         ARG NB_UID
-        ENV USER ${NB_USER}
-        ENV HOME /home/${NB_USER}
+        ENV NB_USER=rstudio
+        ENV NB_UID=1000
 
         EXPOSE 8787
 
@@ -50,9 +50,8 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         {{sd}}
         {% endfor %}
 
-        # Allow target path repo is cloned to be configurable
-        ARG REPO_DIR=${HOME}
-        ENV REPO_DIR ${REPO_DIR}
+        ARG REPO_DIR
+        ENV REPO_DIR /WholeTale/workspace
         WORKDIR ${REPO_DIR}
 
         # We want to allow two things:
@@ -90,7 +89,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         {%- endfor %}
 
         # We always want containers to run as non-root
-        USER ${NB_USER}
+        USER rstudio
 
         {% if post_build_scripts -%}
         # Make sure that postBuild scripts are marked executable before executing them
@@ -137,7 +136,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 "root",
                 r"""
                 mkdir /WholeTale && \
-                chown ${NB_USER}:${NB_USER} /WholeTale
+                chown rstudio:rstudio /WholeTale
                 """,
             ),
             (
@@ -156,7 +155,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 "root",
                 # Change ownership of rserver config
                 r"""
-                chown -R ${NB_USER}:${NB_USER} /etc/rstudio
+                chown -R rstudio:rstudio /etc/rstudio
                 """,
             ),
         ]
@@ -169,7 +168,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
     def get_build_script_files(self):
         """Dict of files to be copied to the container image for use in building
         """
-        files = {"r/start.sh": "/start.sh"}
+        files = {os.path.join(os.path.dirname(__file__), "r/start.sh"): "/start.sh"}
         files.update(super().get_build_script_files())
         return files
 
@@ -225,6 +224,11 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 "RUN {}".format(textwrap.dedent(script.strip('\n')))
             )
 
+        build_script_files = {
+            self.generate_build_context_filename(k)[0]: v
+            for k, v in self.get_build_script_files().items()
+        }
+
         return t.render(
             image_spec='3.5.1',  # TODO: fixme
             files=files,
@@ -232,7 +236,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             path=self.get_path(),
             env=self.get_env(),
             assemble_script_directives=assemble_script_directives,
-            build_script_files=self.get_build_script_files(),
+            build_script_files=build_script_files,
             build_scripts=self.get_build_scripts(),
             start_script="/start.sh",
         )
