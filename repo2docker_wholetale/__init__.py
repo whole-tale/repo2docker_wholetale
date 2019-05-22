@@ -4,6 +4,7 @@
 
 from .rocker import RockerWTStackBuildPack
 from .jupyter import JupyterWTStackBuildPack
+from .spark import JupyterSparkWTStackBuildPack
 
 
 __author__ = """Kacper Kowalik"""

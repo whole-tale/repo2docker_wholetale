@@ -9,7 +9,7 @@ import pkg_resources
 import tarfile
 import textwrap
 
-from repo2docker.buildpacks.base import TEMPLATE, ENTRYPOINT_FILE
+from repo2docker.buildpacks.base import TEMPLATE
 from repo2docker.buildpacks.python import PythonBuildPack
 
 from .wholetale import WholeTaleBuildPack
@@ -17,9 +17,7 @@ from .wholetale import WholeTaleBuildPack
 
 class JupyterWTStackBuildPack(PythonBuildPack):
 
-    DOCKERFILE_TEMPLATE = textwrap.dedent(TEMPLATE)
-
-    def detect(self):
+    def detect(self, buildpack="PythonBuildPack"):
         if not os.path.exists(self.binder_path("environment.json")):
             return False
 
@@ -29,7 +27,7 @@ class JupyterWTStackBuildPack(PythonBuildPack):
         try:
             return (
                 env["config"]["template"] == "base.tpl"
-                and env["config"]["buildpack"] == "PythonBuildPack"
+                and env["config"]["buildpack"] == buildpack
             )
         except (KeyError, TypeError):
             return False

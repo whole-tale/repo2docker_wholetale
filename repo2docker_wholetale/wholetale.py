@@ -88,3 +88,16 @@ class WholeTaleBuildPack(DockerBuildPack):
         description_R = 'DESCRIPTION'
         if not self.binder_dir and os.path.exists(description_R):
             return ("${NB_USER}", 'R --quiet -e "devtools::install_local(getwd())"')
+
+    def build(self, *args, **kwargs):
+        tempdir = tempfile.mkdtemp()
+
+        with open(os.path.join(tempdir, 'Dockerfile'), 'wb') as f:
+            f.write(self.render().encode('utf-8'))
+
+        shutil.copytree('.', os.path.join(tempdir, 'src'))
+
+        args[-1].update({'path': tempdir})  # extra_build_kwargs
+        yield from super().build(*args, **kwargs)
+
+        shutil.rmtree(tempdir, ignore_errors=True)
