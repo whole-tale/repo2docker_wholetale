@@ -5,6 +5,7 @@
 from .rocker import RockerWTStackBuildPack
 from .jupyter import JupyterWTStackBuildPack
 from .spark import JupyterSparkWTStackBuildPack
+from .openrefine import OpenRefineWTStackBuildPack
 
 
 __author__ = """Kacper Kowalik"""
