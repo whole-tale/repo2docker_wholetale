@@ -8,10 +8,10 @@ import os
 import shutil
 import tempfile
 
-from repo2docker.buildpacks.docker import DockerBuildPack
+from repo2docker.buildpacks.base import BuildPack
 
 
-class WholeTaleBuildPack(DockerBuildPack):
+class WholeTaleBuildPack(BuildPack):
     def binder_path(self, path):
         """
         Locate a build file in a default dir.
@@ -89,7 +89,8 @@ class WholeTaleBuildPack(DockerBuildPack):
         if not self.binder_dir and os.path.exists(description_R):
             return ("${NB_USER}", 'R --quiet -e "devtools::install_local(getwd())"')
 
-    def build(self, *args, **kwargs):
+    def _build(self, *args, **kwargs):
+        """Not used right now...."""
         tempdir = tempfile.mkdtemp()
 
         with open(os.path.join(tempdir, 'Dockerfile'), 'wb') as f:
