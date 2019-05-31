@@ -3,7 +3,16 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
+include *.py
+include *.txt
+include Makefile
+include tox.ini
+exclude .editorconfig
+exclude .github/*
+exclude .github
 
+recursive-include repo2docker_wholetale *.js
+recursive-include repo2docker_wholetale *.sh
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
