@@ -40,7 +40,7 @@ setup(
     include_package_data=True,
     keywords='repo2docker_wholetale',
     name='repo2docker_wholetale',
-    packages=find_packages(include=['repo2docker_wholetale']),
+    packages=find_packages(),
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
