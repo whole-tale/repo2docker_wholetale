@@ -16,14 +16,25 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         r"""
         FROM rocker/geospatial:{{ image_spec }}
         ENV DEBIAN_FRONTEND=noninteractive
+
+        # Curl used to download patched rstudio package
+        RUN apt-get -qq update && \
+        apt-get -qq install --yes --no-install-recommends curl > /dev/null && \
+        apt-get -qq purge && \
+        apt-get -qq clean && \
+        rm -rf /var/lib/apt/lists/*
+        
         # Use bash as default shell, rather than sh
         ENV SHELL /bin/bash
 
         # Set up user and repo_dir (not used in this template)
         ARG NB_USER
         ARG NB_UID
+        ARG USER
         ENV NB_USER=rstudio
         ENV NB_UID=1000
+        # USER required for --auth-none 1 
+        ENV USER=rstudio 
 
         EXPOSE 8787
 
@@ -67,6 +78,8 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         USER root
         # Copy cwd, to get aux files, it's going to be overshadowed with WT mount
         COPY src/ ${REPO_DIR}
+        # Must chown for build (i.e., install.R)
+        RUN chown -R ${NB_USER}:${NB_USER} ${REPO_DIR}
 
         {% if env -%}
         # The rest of the environment
@@ -238,5 +251,6 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             assemble_script_directives=assemble_script_directives,
             build_script_files=build_script_files,
             build_scripts=self.get_build_scripts(),
+            build_script_directives=build_script_directives,
             start_script="/start.sh",
         )
