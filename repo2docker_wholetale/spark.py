@@ -7,6 +7,7 @@ class JupyterSparkWTStackBuildPack(JupyterWTStackBuildPack):
         return super().detect(buildpack="SparkBuildPack")
 
     def get_build_scripts(self):
+        env_prefix = "${KERNEL_PYTHON_PREFIX}" if self.py2 else "${NB_PYTHON_PREFIX}"
         return super().get_build_scripts() + [
             (
                 "root",
@@ -35,10 +36,8 @@ class JupyterSparkWTStackBuildPack(JupyterWTStackBuildPack):
             ),
             (
                 "${NB_USER}",
-                r"""conda install --quiet -y 'pyarrow' && \
-    conda clean --all -f -y && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER""",
+                r"""conda install --quiet -p {0} -y 'pyarrow' && \
+    conda clean --all -f -y""".format(env_prefix),
             ),
         ]
 
