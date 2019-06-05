@@ -14,6 +14,7 @@ exclude .github
 
 recursive-include repo2docker_wholetale *.js
 recursive-include repo2docker_wholetale *.sh
+recursive-include repo2docker_wholetale *.key
 recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
