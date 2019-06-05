@@ -42,7 +42,7 @@ class OpenRefineWTStackBuildPack(WholeTaleBuildPack):
         RUN chown 1000:100 /wholetale
         USER wtuser
 
-        CMD /app/OpenRefine-${OR_VER}/refine -i 0.0.0.0 -d /wholetale/home/openrefine
+        CMD /app/OpenRefine-${OR_VER}/refine -i 0.0.0.0 -d /wholetale/workspace/openrefine
         """
     )
 
