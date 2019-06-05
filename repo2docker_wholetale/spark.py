@@ -3,6 +3,7 @@ from .jupyter import JupyterWTStackBuildPack
 
 
 class JupyterSparkWTStackBuildPack(JupyterWTStackBuildPack):
+
     def detect(self):
         return super().detect(buildpack="SparkBuildPack")
 
@@ -25,19 +26,21 @@ class JupyterSparkWTStackBuildPack(JupyterWTStackBuildPack):
             ),
             (
                 "root",
-                r"""apt-get -y update && \
+                r"""apt-get -qqy update && \
     apt-get install --no-install-recommends -y gnupg && \
     apt-key add /tmp/mesos.key && \
     echo "deb http://repos.mesosphere.io/ubuntu xenial main" > /etc/apt/sources.list.d/mesosphere.list && \
-    apt-get -y update && \
+    apt-get -qqy update && \
     apt-get --no-install-recommends -y install mesos=1.2\* && \
-    apt-get purge --auto-remove -y gnupg && \
+    apt-get purge -qqy && \
     rm -rf /var/lib/apt/lists/*""",
             ),
             (
                 "${NB_USER}",
                 r"""conda install --quiet -p {0} -y 'pyarrow' && \
-    conda clean --all -f -y""".format(env_prefix),
+    conda clean --all -f -y""".format(
+                    env_prefix
+                ),
             ),
         ]
 
@@ -49,9 +52,11 @@ class JupyterSparkWTStackBuildPack(JupyterWTStackBuildPack):
         return scripts
 
     def get_base_packages(self):
-        return {'openjdk-8-jre-headless', 'ca-certificates-java'}.union(
-            super().get_base_packages()
-        )
+        return {
+            'openjdk-8-jre-headless',
+            'ca-certificates-java',
+            'gnupg',
+        }.union(super().get_base_packages())
 
     def get_build_env(self):
         return [
