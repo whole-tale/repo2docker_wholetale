@@ -1,4 +1,4 @@
-FROM wholetale/repo2docker:latest
+FROM wholetale/repo2docker:v0.7rc3
 
 COPY . /src
 RUN pip install /src

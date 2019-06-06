@@ -45,6 +45,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/Xarthisius/repo2docker_wholetale',
-    version='0.0.1',
+    version='0.7.0rc3',
     zip_safe=False,
 )
