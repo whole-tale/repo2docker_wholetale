@@ -136,7 +136,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             env = json.load(fp)
 
         try:
-            return env["config"]["template"] == "rocker-geospatial.tpl"
+            return env["config"]["buildpack"] == "RockerBuildPack"
         except (KeyError, TypeError):
             return False
 

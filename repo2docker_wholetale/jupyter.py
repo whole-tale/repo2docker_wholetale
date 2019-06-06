@@ -26,8 +26,7 @@ class JupyterWTStackBuildPack(PythonBuildPack):
 
         try:
             return (
-                env["config"]["template"] == "base.tpl"
-                and env["config"]["buildpack"] == buildpack
+                env["config"]["buildpack"] == buildpack
             )
         except (KeyError, TypeError):
             return False

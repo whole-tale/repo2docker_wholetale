@@ -54,7 +54,7 @@ class OpenRefineWTStackBuildPack(WholeTaleBuildPack):
             env = json.load(fp)
 
         try:
-            return env["config"]["template"] == "openrefine.tpl"
+            return env["config"]["buildpack"] == "OpenRefineBuildPack"
         except (KeyError, TypeError):
             return False
 
