@@ -2,21 +2,13 @@
 
 """Main module."""
 
-import io
 import json
 import os
-import pkg_resources
-import tarfile
-import textwrap
 
-from repo2docker.buildpacks.base import TEMPLATE
 from repo2docker.buildpacks.python import PythonBuildPack
-
-from .wholetale import WholeTaleBuildPack
 
 
 class JupyterWTStackBuildPack(PythonBuildPack):
-
     def detect(self, buildpack="PythonBuildPack"):
         if not os.path.exists(self.binder_path("environment.json")):
             return False
@@ -25,9 +17,7 @@ class JupyterWTStackBuildPack(PythonBuildPack):
             env = json.load(fp)
 
         try:
-            return (
-                env["config"]["buildpack"] == buildpack
-            )
+            return env["config"]["buildpack"] == buildpack
         except (KeyError, TypeError):
             return False
 
@@ -44,3 +34,7 @@ class JupyterWTStackBuildPack(PythonBuildPack):
 
         files.update(super().get_build_script_files())
         return files
+
+    def get_build_scripts(self):
+        scripts = [("root", r"""mkdir ${HOME}/work""")]
+        return super().get_build_scripts() + scripts
