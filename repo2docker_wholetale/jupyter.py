@@ -36,5 +36,8 @@ class JupyterWTStackBuildPack(PythonBuildPack):
         return files
 
     def get_build_scripts(self):
-        scripts = [("root", r"""mkdir ${HOME}/work""")]
+        scripts = [
+            ("root", r"""mkdir ${HOME}/work"""),
+            ("root", r"""chown -R ${NB_USER}:${NB_USER} ${HOME}"""),
+        ]
         return super().get_build_scripts() + scripts
