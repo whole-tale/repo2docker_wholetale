@@ -2,7 +2,6 @@
 
 """Main module."""
 
-import pkg_resources
 import re
 import os
 import shutil
@@ -18,12 +17,10 @@ class WholeTaleBuildPack(BuildPack):
 
         .wholetale takes precedence over default binder behaviour
         """
-        if os.path.exists('.wholetale'):
-            return os.path.join('binder', path)
-        elif os.path.exists('binder'):
-            return os.path.join('.wholetale', path)
-        else:
-            return path
+        for possible_config_dir in (".wholetale", "binder"):
+            if os.path.exists(possible_config_dir):
+                return os.path.join(possible_config_dir, path)
+        return path
 
     def get_build_script_files(self):
         """
