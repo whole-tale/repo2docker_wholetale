@@ -252,5 +252,6 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             build_script_files=build_script_files,
             build_scripts=self.get_build_scripts(),
             build_script_directives=build_script_directives,
+            post_build_scripts=self.get_post_build_scripts(),
             start_script="/start.sh",
         )
