@@ -81,6 +81,12 @@ class WholeTaleBuildPack(BuildPack):
         if os.path.exists(installR_path):
             return ("${NB_USER}", "Rscript %s" % installR_path)
 
+    def get_post_build_scripts(self):
+        post_build = self.binder_path("postBuild")
+        if os.path.exists(post_build):
+            return [post_build]
+        return []
+
     def descriptionR_assemble_script(self):
         description_R = 'DESCRIPTION'
         if not self.binder_dir and os.path.exists(description_R):
