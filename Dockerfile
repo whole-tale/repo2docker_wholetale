@@ -1,4 +1,4 @@
-FROM wholetale/repo2docker:latest
+FROM wholetale/repo2docker:51c9e5eb
 
 COPY . /src
 RUN pip install /src bdbag==1.5.4
