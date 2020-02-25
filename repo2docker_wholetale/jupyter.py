@@ -9,7 +9,7 @@ from repo2docker.buildpacks.r import RBuildPack
 
 
 class JupyterWTStackBuildPack(RBuildPack):
-    def detect(self, buildpack="RBuildPack"):
+    def detect(self, buildpack="PythonBuildPack"):
         if not os.path.exists(self.binder_path("environment.json")):
             return False
 
