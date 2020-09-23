@@ -23,18 +23,18 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         apt-get -qq purge && \
         apt-get -qq clean && \
         rm -rf /var/lib/apt/lists/*
-        
+
         # Use bash as default shell, rather than sh
         ENV SHELL /bin/bash
 
         # Set up user and repo_dir (not used in this template)
-        ARG NB_USER
-        ARG NB_UID
-        ARG USER
+        ARG NB_USER=rstudio
+        ARG NB_UID=1000
+        ARG USER=rstudio
         ENV NB_USER=rstudio
         ENV NB_UID=1000
-        # USER required for --auth-none 1 
-        ENV USER=rstudio 
+        # USER required for --auth-none 1
+        ENV USER=rstudio
 
         EXPOSE 8787
 
@@ -74,7 +74,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         # The XDG standard suggests ~/.local/bin as the path for local user-specific
         # installs. See https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
         ENV PATH ${HOME}/.local/bin:${REPO_DIR}/.local/bin:${PATH}
-        
+
         USER root
         # Copy cwd, to get aux files, it's going to be overshadowed with WT mount
         COPY src/ ${REPO_DIR}
@@ -141,8 +141,10 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             return False
 
     def get_build_scripts(self):
-        rstudio_url = 'http://use.yt/upload/e66cd310'
-        rstudio_checksum = 'e9764a5246bccc5ff9e39b62aea148ff'
+        rstudio_url = self.wt_env.get("WT_RSTUDIO_URL", "http://use.yt/upload/e66cd310")
+        rstudio_checksum = self.wt_env.get(
+            "WT_RSTUDIO_MD5", "e9764a5246bccc5ff9e39b62aea148ff"
+        )
 
         scripts = [
             (
@@ -243,7 +245,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         }
 
         return t.render(
-            image_spec='3.5.1',  # TODO: fixme
+            image_spec=self.wt_env.get("WT_ROCKER_VER", "3.5.1"),
             files=files,
             labels={},
             path=self.get_path(),
