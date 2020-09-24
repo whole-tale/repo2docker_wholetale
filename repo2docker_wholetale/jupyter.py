@@ -9,6 +9,15 @@ from repo2docker.buildpacks.r import RBuildPack
 
 
 class JupyterWTStackBuildPack(RBuildPack):
+
+    @property
+    def wt_env(self):
+        if self._wt_env is None:
+            with open(self.binder_path("environment.json"), "r") as fp:
+                env = json.load(fp)
+            self._wt_env = dict([_.split("=") for _ in env["config"]["environment"]])
+        return self._wt_env
+
     def detect(self, buildpack="PythonBuildPack"):
         if not os.path.exists(self.binder_path("environment.json")):
             return False
