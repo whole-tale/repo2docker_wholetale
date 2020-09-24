@@ -141,7 +141,13 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             return False
 
     def get_build_scripts(self):
-        rstudio_url = self.wt_env.get("WT_RSTUDIO_URL", "http://use.yt/upload/e66cd310")
+        rstudio_url = self.wt_env.get(
+            "WT_RSTUDIO_URL",
+            (
+                "https://github.com/whole-tale/rstudio/releases/download/"
+                "v1.2.679-wt/rstudio-server-1.2.679-debian9-x86_64.deb"
+            ),
+        )
         rstudio_checksum = self.wt_env.get(
             "WT_RSTUDIO_MD5", "e9764a5246bccc5ff9e39b62aea148ff"
         )
