@@ -2,6 +2,7 @@
 
 """Main module."""
 
+import json
 import re
 import os
 import shutil
@@ -11,6 +12,9 @@ from repo2docker.buildpacks.base import BuildPack
 
 
 class WholeTaleBuildPack(BuildPack):
+
+    _wt_env = None
+
     def binder_path(self, path):
         """
         Locate a build file in a default dir.
@@ -44,11 +48,11 @@ class WholeTaleBuildPack(BuildPack):
         return files
 
     def apt_assemble_script(self):
-        if os.path.exists(self.binder_path('apt.txt')):
-            with open(self.binder_path('apt.txt')) as f:
+        if os.path.exists(self.binder_path("apt.txt")):
+            with open(self.binder_path("apt.txt")) as f:
                 apt_packages = []
                 for l in f:
-                    package = l.partition('#')[0].strip()
+                    package = l.partition("#")[0].strip()
                     if not package:
                         continue
                     # Validate that this is, indeed, just a list of packages
@@ -63,7 +67,7 @@ class WholeTaleBuildPack(BuildPack):
 
             if apt_packages:
                 return (
-                    'root',
+                    "root",
                     # This apt-get install is *not* quiet, since users explicitly asked for this
                     r"""
                     apt-get -qq update && \
@@ -72,12 +76,12 @@ class WholeTaleBuildPack(BuildPack):
                     apt-get -qq clean && \
                     rm -rf /var/lib/apt/lists/*
                     """.format(
-                        ' '.join(apt_packages)
+                        " ".join(apt_packages)
                     ),
                 )
 
     def installR_assemble_script(self):
-        installR_path = self.binder_path('install.R')
+        installR_path = self.binder_path("install.R")
         if os.path.exists(installR_path):
             return ("${NB_USER}", "Rscript %s" % installR_path)
 
@@ -88,20 +92,28 @@ class WholeTaleBuildPack(BuildPack):
         return []
 
     def descriptionR_assemble_script(self):
-        description_R = 'DESCRIPTION'
+        description_R = "DESCRIPTION"
         if not self.binder_dir and os.path.exists(description_R):
             return ("${NB_USER}", 'R --quiet -e "devtools::install_local(getwd())"')
+
+    @property
+    def wt_env(self):
+        if self._wt_env is None:
+            with open(self.binder_path("environment.json"), "r") as fp:
+                env = json.load(fp)
+            self._wt_env = dict([_.split("=") for _ in env["config"]["environment"]])
+        return self._wt_env
 
     def _build(self, *args, **kwargs):
         """Not used right now...."""
         tempdir = tempfile.mkdtemp()
 
-        with open(os.path.join(tempdir, 'Dockerfile'), 'wb') as f:
-            f.write(self.render().encode('utf-8'))
+        with open(os.path.join(tempdir, "Dockerfile"), "wb") as f:
+            f.write(self.render().encode("utf-8"))
 
-        shutil.copytree('.', os.path.join(tempdir, 'src'))
+        shutil.copytree(".", os.path.join(tempdir, "src"))
 
-        args[-1].update({'path': tempdir})  # extra_build_kwargs
+        args[-1].update({"path": tempdir})  # extra_build_kwargs
         yield from super().build(*args, **kwargs)
 
         shutil.rmtree(tempdir, ignore_errors=True)
