@@ -53,6 +53,14 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
         return super().get_build_scripts() + [
             (
                 "root",
+                r"""
+                wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
+                add-apt-repository "deb https://xpra.org/beta bionic main" && \
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
+                """
+            ),
+            (
+                "root",
                 r"""--mount=type=bind,target=/stata-install,source=/usr/local/stata/,from=stata-install:{stata_version} cp -r /stata-install /usr/local/stata""".format(stata_version=self.wt_env.get("VERSION", "16"))
             ),
             (
@@ -71,5 +79,17 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
 
     def get_base_packages(self):
         return {
+            'apt-transport-https',
+            'dbus-x11',
+            'gnupg',
             'libpng16-16',
+            'libgtk2.0-0',
+            'libtinfo5',
+            'python-websockify',
+            'software-properties-common',
+            'wget',
+            'x11-apps',
+            'x11-utils',
+            'xfonts-base',
+            'xvfb',
         }.union(super().get_base_packages())
