@@ -46,6 +46,11 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         # MLM_LICENSE_FILE specifies the path to the license at runtime
         return super().get_build_env() + [("MLM_LICENSE_FILE", "/licenses/matlab/network.lic")]
 
+    def get_path(self):
+        """Adds path to Matlab binaries to user's PATH.
+        """
+        return super().get_path() + ["/usr/local/MATLAB/{}/bin".format(self.wt_env.get("VERSION", "R2020a"))]
+
     def get_build_args(self):
         """
         Return args to be set at build time. FILE_INSTALLATION_KEY is
@@ -60,6 +65,14 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         Jupyter kernel.
         """
         return super().get_build_scripts() + [
+            (
+                "root",
+                r"""
+                wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
+                add-apt-repository "deb https://xpra.org/beta bionic main" && \
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
+                """
+            ),
             (
                 "root",
                 r"""--mount=type=bind,target=/matlab-install,source=/matlab-install/,from=matlab-install:{matlab_version} cd /matlab-install &&  ./install -mode silent -licensePath /matlab-install/network.lic -agreeToLicense yes -fileInstallationKey ${{FILE_INSTALLATION_KEY}} -product.MATLAB | grep --line-buffered -v fileInstallationKey | tee /dev/stderr | grep 'End - Successful' """.format(matlab_version=self.wt_env.get("VERSION", "R2020a"))
@@ -111,7 +124,10 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         https://github.com/mathworks-ref-arch/matlab-dockerfile/
         """
         return {
+            'apt-transport-https',
             'ca-certificates',
+            'dbus-x11',
+            'gnupg',
             'lsb-release',
             'libasound2',
             'libatk1.0-0',
@@ -161,9 +177,14 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             'libxtst6',
             'libxxf86vm1',
             'procps',
+            'python-websockify',
+            'software-properties-common',
             'wget',
+            'xfonts-base',
             'xkb-data',
             'xvfb',
+            'x11-apps',
+            'x11-utils',
             'x11vnc',
             'xvfb',
             'sudo',
@@ -173,6 +194,5 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             'gcc',
             'g++',
             'gfortran',
-            'csh',
             'csh',
         }.union(super().get_base_packages())
