@@ -44,12 +44,15 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
 
     def get_build_env(self):
         # MLM_LICENSE_FILE specifies the path to the license at runtime
-        return super().get_build_env() + [("MLM_LICENSE_FILE", "/licenses/matlab/network.lic")]
+        return super().get_build_env() + [
+            ("MLM_LICENSE_FILE", "/licenses/matlab/network.lic")
+        ]
 
     def get_path(self):
-        """Adds path to Matlab binaries to user's PATH.
-        """
-        return super().get_path() + ["/usr/local/MATLAB/{}/bin".format(self.wt_env.get("VERSION", "R2020a"))]
+        """Adds path to Matlab binaries to user's PATH."""
+        return super().get_path() + [
+            "/usr/local/MATLAB/{}/bin".format(self.wt_env.get("VERSION", "R2020a"))
+        ]
 
     def get_build_args(self):
         """
@@ -71,17 +74,25 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
                 add-apt-repository "deb https://xpra.org/beta bionic main" && \
                 DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
-                """
+                """,
             ),
             (
                 "root",
-                r"""--mount=type=bind,target=/matlab-install,source=/matlab-install/,from=matlab-install:{matlab_version} cd /matlab-install &&  ./install -mode silent -licensePath /matlab-install/network.lic -agreeToLicense yes -fileInstallationKey ${{FILE_INSTALLATION_KEY}} -product.MATLAB | grep --line-buffered -v fileInstallationKey | tee /dev/stderr | grep 'End - Successful' """.format(matlab_version=self.wt_env.get("VERSION", "R2020a"))
+                "--mount=type=bind,target=/matlab-install,source=/matlab-install/,"
+                "from=matlab-install:{matlab_version} "
+                "cd /matlab-install &&  ./install -mode silent "
+                "-licensePath /matlab-install/network.lic -agreeToLicense yes "
+                "-fileInstallationKey ${{FILE_INSTALLATION_KEY}} -product.MATLAB "
+                "| grep --line-buffered -v fileInstallationKey "
+                "| tee /dev/stderr | grep 'End - Successful' ".format(
+                    matlab_version=self.wt_env.get("VERSION", "R2020a")
+                ),
             ),
             (
                 "root",
                 r"""
                 cd /usr/local/MATLAB/*/extern/engines/python && python setup.py install
-                """
+                """,
             ),
             (
                 "${NB_USER}",
@@ -103,16 +114,26 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             with open(toolboxes_path) as f:
                 toolboxes = f.read().splitlines()
 
-            toolboxes = map(lambda m: '-'+m, toolboxes)
+            toolboxes = map(lambda m: "-" + m, toolboxes)
 
             # This is ugly, but I couldn't think of a better way. The Matlab
-            # install script outputs the secret install key and succeeds on error. 
+            # install script outputs the secret install key and succeeds on error.
             # So, I'm grepping out the secret key and grepping for the success
             # message. The tee is there so that output isn't consumed by grep.
             scripts += [
                 (
                     "root",
-                    r"""--mount=type=bind,target=/matlab-install,source=/matlab-install/,from=matlab-install:{matlab_version} cd /matlab-install &&  ./install -mode silent -licensePath /matlab-install/network.lic -agreeToLicense yes -fileInstallationKey ${{FILE_INSTALLATION_KEY}} """.format(matlab_version=self.wt_env.get("VERSION", "R2020a")) + " ".join(toolboxes) + " | grep --line-buffered -v fileInstallationKey | tee /dev/stderr | grep 'End - Successful'"
+                    "--mount=type=bind,target=/matlab-install,source=/matlab-install/,"
+                    "from=matlab-install:{matlab_version} "
+                    "cd /matlab-install &&  ./install -mode silent -outputFile /dev/stdout "
+                    "-destinationFolder /usr/local/MATLAB/{matlab_version} "
+                    "-licensePath /matlab-install/network.lic -agreeToLicense yes "
+                    "-fileInstallationKey ${{FILE_INSTALLATION_KEY}} ".format(
+                        matlab_version=self.wt_env.get("VERSION", "R2020a")
+                    )
+                    + " ".join(toolboxes)
+                    + " | grep --line-buffered -v fileInstallationKey "
+                    " | tee /dev/stderr | grep 'End - Successful'",
                 )
             ]
 
@@ -124,75 +145,75 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         https://github.com/mathworks-ref-arch/matlab-dockerfile/
         """
         return {
-            'apt-transport-https',
-            'ca-certificates',
-            'dbus-x11',
-            'gnupg',
-            'lsb-release',
-            'libasound2',
-            'libatk1.0-0',
-            'libc6',
-            'libcairo2',
-            'libcap2',
-            'libcomerr2',
-            'libcups2',
-            'libdbus-1-3',
-            'libfontconfig1',
-            'libgconf-2-4',
-            'libgcrypt20',
-            'libgdk-pixbuf2.0-0',
-            'libgssapi-krb5-2',
-            'libgstreamer-plugins-base1.0-0',
-            'libgstreamer1.0-0',
-            'libgtk2.0-0',
-            'libk5crypto3',
-            'libkrb5-3',
-            'libnspr4',
-            'libnspr4-dbg',
-            'libnss3',
-            'libpam0g',
-            'libpango-1.0-0',
-            'libpangocairo-1.0-0',
-            'libpangoft2-1.0-0',
-            'libselinux1',
-            'libsm6',
-            'libsndfile1',
-            'libudev1',
-            'libx11-6',
-            'libx11-xcb1',
-            'libxcb1',
-            'libxcomposite1',
-            'libxcursor1',
-            'libxdamage1',
-            'libxext6',
-            'libxfixes3',
-            'libxft2',
-            'libxi6',
-            'libxmu6',
-            'libxrandr2',
-            'libxrender1',
-            'libxslt1.1',
-            'libxss1',
-            'libxt6',
-            'libxtst6',
-            'libxxf86vm1',
-            'procps',
-            'python-websockify',
-            'software-properties-common',
-            'wget',
-            'xfonts-base',
-            'xkb-data',
-            'xvfb',
-            'x11-apps',
-            'x11-utils',
-            'x11vnc',
-            'xvfb',
-            'sudo',
-            'zlib1g',
-            'locales',
-            'locales-all',
-            'gcc',
-            'g++',
-            'gfortran',
-            'csh',
+            "apt-transport-https",
+            "ca-certificates",
+            "dbus-x11",
+            "gnupg",
+            "lsb-release",
+            "libasound2",
+            "libatk1.0-0",
+            "libc6",
+            "libcairo2",
+            "libcap2",
+            "libcomerr2",
+            "libcups2",
+            "libdbus-1-3",
+            "libfontconfig1",
+            "libgconf-2-4",
+            "libgcrypt20",
+            "libgdk-pixbuf2.0-0",
+            "libgssapi-krb5-2",
+            "libgstreamer-plugins-base1.0-0",
+            "libgstreamer1.0-0",
+            "libgtk2.0-0",
+            "libk5crypto3",
+            "libkrb5-3",
+            "libnspr4",
+            "libnspr4-dbg",
+            "libnss3",
+            "libpam0g",
+            "libpango-1.0-0",
+            "libpangocairo-1.0-0",
+            "libpangoft2-1.0-0",
+            "libselinux1",
+            "libsm6",
+            "libsndfile1",
+            "libudev1",
+            "libx11-6",
+            "libx11-xcb1",
+            "libxcb1",
+            "libxcomposite1",
+            "libxcursor1",
+            "libxdamage1",
+            "libxext6",
+            "libxfixes3",
+            "libxft2",
+            "libxi6",
+            "libxmu6",
+            "libxrandr2",
+            "libxrender1",
+            "libxslt1.1",
+            "libxss1",
+            "libxt6",
+            "libxtst6",
+            "libxxf86vm1",
+            "procps",
+            "python-websockify",
+            "software-properties-common",
+            "wget",
+            "xfonts-base",
+            "xkb-data",
+            "xvfb",
+            "x11-apps",
+            "x11-utils",
+            "x11vnc",
+            "xvfb",
+            "sudo",
+            "zlib1g",
+            "locales",
+            "locales-all",
+            "gcc",
+            "g++",
+            "gfortran",
+            "csh",
         }.union(super().get_base_packages())
