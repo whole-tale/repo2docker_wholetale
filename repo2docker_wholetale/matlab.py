@@ -80,7 +80,8 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 "root",
                 "--mount=type=bind,target=/matlab-install,source=/matlab-install/,"
                 "from=matlab-install:{matlab_version} "
-                "cd /matlab-install &&  ./install -mode silent "
+                "cd /matlab-install &&  ./install -mode silent -outputFile /dev/stdout "
+                "-destinationFolder /usr/local/MATLAB/{matlab_version} "
                 "-licensePath /matlab-install/network.lic -agreeToLicense yes "
                 "-fileInstallationKey ${{FILE_INSTALLATION_KEY}} -product.MATLAB "
                 "| grep --line-buffered -v fileInstallationKey "
