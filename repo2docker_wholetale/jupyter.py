@@ -5,10 +5,10 @@
 import json
 import os
 
-from repo2docker.buildpacks.r import RBuildPack
+from .wholetale import WholeTaleRBuildPack
 
 
-class JupyterWTStackBuildPack(RBuildPack):
+class JupyterWTStackBuildPack(WholeTaleRBuildPack):
 
     @property
     def wt_env(self):
@@ -19,16 +19,7 @@ class JupyterWTStackBuildPack(RBuildPack):
         return self._wt_env
 
     def detect(self, buildpack="PythonBuildPack"):
-        if not os.path.exists(self.binder_path("environment.json")):
-            return False
-
-        with open(self.binder_path("environment.json"), "r") as fp:
-            env = json.load(fp)
-
-        try:
-            return env["config"]["buildpack"] == buildpack
-        except (KeyError, TypeError):
-            return False
+        return super().detect(buildpack=buildpack)
 
     def get_build_script_files(self):
         """Dict of files to be copied to the container image for use in building
