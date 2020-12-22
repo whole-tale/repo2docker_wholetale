@@ -58,7 +58,7 @@ class OpenRefineWTStackBuildPack(WholeTaleBuildPack):
         except (KeyError, TypeError):
             return False
 
-    def render(self):
+    def render(self, build_args=None):
         t = jinja2.Template(self.DOCKERFILE_TEMPLATE)
 
         return t.render(version='2.8')  # TODO: fixme

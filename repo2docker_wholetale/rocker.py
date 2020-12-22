@@ -214,7 +214,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         """
         return super().get_path() + ['/usr/lib/rstudio-server/bin/']
 
-    def render(self):
+    def render(self, build_args=None):
 
         postbuild_file = start_file = None
         files = {'postBuild': None, 'start': None}
