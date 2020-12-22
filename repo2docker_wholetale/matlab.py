@@ -31,16 +31,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
     _wt_env = None
 
     def detect(self):
-        if not os.path.exists(self.binder_path("environment.json")):
-            return False
-
-        with open(self.binder_path("environment.json"), "r") as fp:
-            env = json.load(fp)
-
-        try:
-            return env["config"]["buildpack"] == "MatlabBuildPack"
-        except (KeyError, TypeError):
-            return False
+        return super().detect(buildpack="MatlabBuildPack")
 
     def get_build_env(self):
         # MLM_LICENSE_FILE specifies the path to the license at runtime
