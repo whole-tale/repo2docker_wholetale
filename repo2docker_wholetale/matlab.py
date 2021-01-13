@@ -36,7 +36,9 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
     def get_build_env(self):
         # MLM_LICENSE_FILE specifies the path to the license at runtime
         return super().get_build_env() + [
-            ("MLM_LICENSE_FILE", "/licenses/matlab/network.lic")
+            ("MLM_LICENSE_FILE", "/licenses/matlab/network.lic"),
+            ("BASE_URL", "/matlab"),
+            ("APP_PORT", "8888")
         ]
 
     def get_path(self):
@@ -81,17 +83,17 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 ),
             ),
             (
+                "${NB_USER}",
+                r"""
+                ${NB_PYTHON_PREFIX}/bin/pip install matlab_kernel https://github.com/mathworks/jupyter-matlab-proxy/archive/0.1.0.tar.gz
+                """,
+            ),
+            (
                 "root",
                 r"""
                 cd /usr/local/MATLAB/*/extern/engines/python && python setup.py install
                 """,
-            ),
-            (
-                "${NB_USER}",
-                r"""
-                ${NB_PYTHON_PREFIX}/bin/pip install matlab_kernel
-                """,
-            ),
+            )
         ]
 
     def get_preassemble_scripts(self):
@@ -139,6 +141,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         return {
             "apt-transport-https",
             "ca-certificates",
+            "curl",
             "dbus-x11",
             "gnupg",
             "lsb-release",
@@ -157,6 +160,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             "libgssapi-krb5-2",
             "libgstreamer-plugins-base1.0-0",
             "libgstreamer1.0-0",
+            "libglib2.0-0",
             "libgtk2.0-0",
             "libk5crypto3",
             "libkrb5-3",
@@ -190,6 +194,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             "libxtst6",
             "libxxf86vm1",
             "procps",
+            "python3-pip",
             "python-websockify",
             "software-properties-common",
             "wget",
