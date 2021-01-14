@@ -2,6 +2,7 @@
 
 """Main module."""
 
+import datetime
 import json
 import re
 import os
@@ -9,6 +10,7 @@ import shutil
 import tempfile
 
 from repo2docker.buildpacks.base import BuildPack
+from repo2docker.buildpacks.r import RBuildPack
 
 
 class WholeTaleBuildPack(BuildPack):
@@ -117,3 +119,29 @@ class WholeTaleBuildPack(BuildPack):
         yield from super().build(*args, **kwargs)
 
         shutil.rmtree(tempdir, ignore_errors=True)
+
+
+class WholeTaleRBuildPack(RBuildPack):
+
+    def set_checkpoint_date(self):
+        if not self.checkpoint_date:
+            # no R snapshot date set through runtime.txt so set
+            # to a reasonable default -- the last month of the previous
+            # quarter
+            quarter = self.mran_date(datetime.date.today())
+            self._checkpoint_date = self._get_latest_working_mran_date(quarter, 3)
+            self._runtime = "r-{}".format(str(self._checkpoint_date))
+
+    def detect(self, buildpack=None):
+        if not os.path.exists(self.binder_path("environment.json")):
+            return False
+
+        with open(self.binder_path("environment.json"), "r") as fp:
+            env = json.load(fp)
+
+        try:
+            if env["config"]["buildpack"] == buildpack:
+                self.set_checkpoint_date()
+                return True
+        except (KeyError, TypeError):
+            return False
