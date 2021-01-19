@@ -19,8 +19,6 @@ class RJupyterWTStackBuildPack(WholeTaleRBuildPack):
         files = {}
         for k, v in {
             "base/healthcheck.py": "/healthcheck.py",
-            "iframes/custom.js": "/home/jovyan/.jupyter/custom/custom.js",
-            "iframes/jupyter_notebook_config.py": "/home/jovyan/.jupyter/jupyter_notebook_config.py",
         }.items():
             files[os.path.join(os.path.dirname(__file__), k)] = v
 
