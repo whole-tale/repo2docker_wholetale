@@ -27,17 +27,7 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
     _wt_env = None
 
     def detect(self):
-        if not os.path.exists(self.binder_path("environment.json")):
-            return False
-
-        with open(self.binder_path("environment.json"), "r") as fp:
-            env = json.load(fp)
-
-        try:
-            return env["config"]["buildpack"] == "StataBuildPack"
-        except (KeyError, TypeError):
-            return False
-
+        return super().detect(buildpack="StataBuildPack")
 
     def get_path(self):
         """Adds path to STATA binaries to user's PATH.
