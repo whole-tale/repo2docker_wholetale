@@ -8,6 +8,7 @@ from .spark import JupyterSparkWTStackBuildPack
 from .openrefine import OpenRefineWTStackBuildPack
 from .rkernel import RJupyterWTStackBuildPack
 from .matlab import MatlabWTStackBuildPack
+from .stata import StataWTStackBuildPack
 
 
 __author__ = """Kacper Kowalik"""
