@@ -65,7 +65,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 "root",
                 r"""
                 wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
-                add-apt-repository "deb https://xpra.org/beta bionic main" && \
+                add-apt-repository "deb https://xpra.org/ bionic main" && \
                 DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
                 """,
             ),
