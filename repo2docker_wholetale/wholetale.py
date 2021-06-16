@@ -137,6 +137,17 @@ class WholeTaleBuildPack(BuildPack):
 
 class WholeTaleRBuildPack(RBuildPack):
 
+    def binder_path(self, path):
+        """
+        Locate a build file in a default dir.
+
+        .wholetale takes precedence over default binder behaviour
+        """
+        for possible_config_dir in (".wholetale", "binder"):
+            if os.path.exists(possible_config_dir):
+                return os.path.join(possible_config_dir, path)
+        return path
+
     def set_checkpoint_date(self):
         if not self.checkpoint_date:
             # no R snapshot date set through runtime.txt so set
