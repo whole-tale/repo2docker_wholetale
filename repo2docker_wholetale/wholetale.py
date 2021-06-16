@@ -49,6 +49,20 @@ class WholeTaleBuildPack(BuildPack):
         )
         return files
 
+
+    def get_build_scripts(self):
+        return super().get_build_scripts() + [
+            (
+                "root",
+                r"""
+                wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
+                chmod u+x /usr/local/bin/reprozip \
+                repozip usage_report --disable
+                """
+            )
+        ]
+
+
     def apt_assemble_script(self):
         if os.path.exists(self.binder_path("apt.txt")):
             with open(self.binder_path("apt.txt")) as f:
@@ -145,3 +159,15 @@ class WholeTaleRBuildPack(RBuildPack):
                 return True
         except (KeyError, TypeError):
             return False
+
+    def get_build_scripts(self):
+        return super().get_build_scripts() + [
+            (
+                "root",
+                r"""
+                wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
+                && chmod a+x /usr/local/bin/reprozip \
+                && reprozip usage_report --disable
+                """
+            )
+        ]
