@@ -85,7 +85,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                ${NB_PYTHON_PREFIX}/bin/pip install matlab_kernel https://github.com/mathworks/jupyter-matlab-proxy/archive/0.1.0.tar.gz
+                ${NB_PYTHON_PREFIX}/bin/pip install matlab_kernel https://github.com/mathworks/jupyter-matlab-proxy/archive/v0.2.0.tar.gz
                 """,
             ),
             (
