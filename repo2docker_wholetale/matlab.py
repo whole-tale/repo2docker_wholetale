@@ -60,6 +60,10 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         install MATLAB core product. Installs Python engine and
         Jupyter kernel.
         """
+        matlab_proxy_version = self.wt_env.get(
+            "WT_MATLAB_PROXY_VERSION", "v0.3.2"
+        )
+
         return super().get_build_scripts() + [
             (
                 "root",
@@ -85,8 +89,10 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                ${NB_PYTHON_PREFIX}/bin/pip install matlab_kernel https://github.com/mathworks/jupyter-matlab-proxy/archive/v0.2.0.tar.gz
-                """,
+                ${{NB_PYTHON_PREFIX}}/bin/pip install matlab_kernel jupyter-matlab-proxy=={matlab_proxy_version}
+                """.format(
+                    matlab_proxy_version=matlab_proxy_version
+                ),
             ),
             (
                 "root",

@@ -1,0 +1,13 @@
+{
+  "config": {
+    "buildpack": "MatlabBuildPack",
+    "command": "matlab-jupyter-app",
+    "csp": "default-src 'self' *.mathworks.com:*; style-src 'self' 'unsafe-inline' *.mathworks.com:*; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.mathworks.com:*; img-src 'self' *.mathworks.com:* data:; frame-ancestors 'self' *.mathworks.com:* dashboard.wholetale.org dashboard.stage.wholetale.org; frame-src 'self' *.mathworks.com:*; connect-src 'self' *.mathworks.com:* wss://localhost:* wss://127.0.0.1:*",
+    "environment": [
+      "VERSION=R2020b",
+      "MWI_BASE_URL=/matlab",
+      "MWI_APP_PORT=8888",
+      "WT_MATLAB_PROXY_VERSION=v0.3.1"
+    ]
+  }
+}
