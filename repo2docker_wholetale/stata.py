@@ -115,8 +115,56 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
                 chmod +x ${HOME}/Desktop/*.desktop
                 """,
             ),
+            (
+                "root",
+                r"""
+                mkdir -p /usr/local/stata/ado/plus && \
+                mkdir -p /usr/local/stata/ado/site && \
+                sleep 60 && \
+                printf "sysdir set SITE /usr/local/stata/ado/site\n"\
+                > /usr/local/stata/profile.do
+                """
+            ),
         ]
 
+
+    def get_assemble_scripts(self):
+        """
+        Introduces install.do to install required STATA packages
+        Install to the SITE directory to make available in the image
+        """
+        scripts = []
+
+        installdo_path = self.binder_path("install.do")
+        if os.path.exists(installdo_path):
+            scripts += [
+                (
+                    "root",
+                    r"""
+                    ls /usr/local/stata && which stata &&\
+                    echo ${{STATA_LICENSE_ENCODED}} | base64 -d > /usr/local/stata/stata.lic && \
+                    /usr/local/stata/stata 'sysdir set PLUS /usr/local/stata/ado/site' < {} && \
+                    rm /usr/local/stata/stata.lic
+                    """.format(installdo_path)
+                )
+            ]
+
+        return super().get_assemble_scripts() + scripts
+
+    def get_build_args(self):
+        """
+        Return args to be set at build time. STATA_LICENSE is
+        required only at build time.
+        """
+        return super().get_build_args() + ["STATA_LICENSE_ENCODED"]
+
+    def get_preassemble_script_files(self):
+        files = super().get_preassemble_script_files()
+        installdo_path = self.binder_path("install.do")
+        if os.path.exists(installdo_path):
+            files[installdo_path] = installdo_path
+
+        return files
 
     def get_base_packages(self):
         return {
@@ -137,5 +185,6 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             'xfce4',
             'xfonts-base',
             'xvfb',
+            'xxd',
         }.union(super().get_base_packages())
 
