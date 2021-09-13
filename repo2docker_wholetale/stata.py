@@ -1,5 +1,6 @@
 import os
 import json
+from tempfile import mkstemp
 from .jupyter import JupyterWTStackBuildPack
 
 
@@ -46,12 +47,15 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
                 r"""
                 wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
                 add-apt-repository "deb https://xpra.org/ bionic main" && \
-                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5 && \
+                mkdir -p /run/xpra && chmod 755 /run/xpra && \
+                mkdir -p /run/user/${NB_UID} && chown ${NB_UID} /run/user/${NB_UID} && chmod 700 /run/user/${NB_UID}  && \
+                mkdir -p /usr/local/stata
                 """
             ),
             (
                 "root",
-                r"""--mount=type=bind,target=/stata-install,source=/usr/local/stata/,from=stata-install:{stata_version} cp -r /stata-install /usr/local/stata""".format(stata_version=self.wt_env.get("VERSION", "16"))
+                r""" --mount=type=bind,target=/stata-install,source=/usr/local/stata/,from=stata-install:{stata_version} cp -r /stata-install/* /usr/local/stata""".format(stata_version=self.wt_env.get("VERSION", "16"))
             ),
             (
                 "${NB_USER}",
@@ -62,10 +66,57 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                sed -i "s/stata-mp/stata/g" /home/jovyan/.stata_kernel.conf
+                sed -i "s/stata-mp/stata/g" /home/jovyan/.stata_kernel.conf 
+                """,
+            ),
+            (
+                "root",
+                r"""
+                sed -i "s/tray = yes/tray = no/g" /etc/xpra/conf.d/05_features.conf
+                """,
+            ),
+            (
+                "${NB_USER}",
+                r"""
+                mkdir -p ${HOME}/Desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=STATA\n\
+                Comment=\n\
+                Exec=xstata\n\
+                Icon=/usr/local/stata/stata16.png\n\
+                Path=${HOME}/work/workspace\n\
+                Terminal=false\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/STATA.desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=Terminal\n\
+                Comment=\n\
+                Exec=exo-open --launch TerminalEmulator\n\
+                Icon=utilities-terminal\n\
+                Path=${HOME}/work/workspace\n\
+                Terminal=false\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/Terminal.desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=Firefox\n\
+                Comment=\n\
+                Exec=firefox %u\n\
+                Icon=firefox\n\
+                Path=\n\
+                Terminal=false\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/Firefox.desktop && \
+                chmod +x ${HOME}/Desktop/*.desktop
                 """,
             ),
         ]
+
 
     def get_base_packages(self):
         return {
@@ -80,6 +131,11 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             'wget',
             'x11-apps',
             'x11-utils',
+            'xubuntu-icon-theme',
+            'firefox',
+            'mousepad',
+            'xfce4',
             'xfonts-base',
             'xvfb',
         }.union(super().get_base_packages())
+
