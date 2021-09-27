@@ -1,12 +1,10 @@
 import os
-import json
-from tempfile import mkstemp
 from .jupyter import JupyterWTStackBuildPack
 
 
 class StataWTStackBuildPack(JupyterWTStackBuildPack):
     """
-    Setup Stata for use with a repository
+    Setup Stata for use with a repository.
 
     This sets up Stata, JupyterLab and the
     [stata-kernel](https://kylebarron.dev/stata_kernel)
@@ -31,14 +29,14 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
         return super().detect(buildpack="StataBuildPack")
 
     def get_path(self):
-        """Adds path to STATA binaries to user's PATH.
-        """
+        """Add path to STATA binaries to user's PATH."""
         return super().get_path() + ["/usr/local/stata/"]
 
     def get_build_scripts(self):
         """
-        Uses Docker buildkit to mount stata-install image to
-        copy pre-installed core Stata product. Also installs
+        Uses Docker buildkit to mount stata-install image.
+
+        Copy pre-installed core Stata product. Also installs
         Jupyter kernel.
         """
         return super().get_build_scripts() + [
@@ -60,13 +58,13 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                ${NB_PYTHON_PREFIX}/bin/pip install stata_kernel==1.10.5 && ${NB_PYTHON_PREFIX}/bin/python -m stata_kernel.install  
+                ${NB_PYTHON_PREFIX}/bin/pip install stata_kernel==1.10.5 && ${NB_PYTHON_PREFIX}/bin/python -m stata_kernel.install
                 """,
             ),
             (
                 "${NB_USER}",
                 r"""
-                sed -i "s/stata-mp/stata/g" /home/jovyan/.stata_kernel.conf 
+                sed -i "s/stata-mp/stata/g" /home/jovyan/.stata_kernel.conf
                 """,
             ),
             (
@@ -127,10 +125,10 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             ),
         ]
 
-
     def get_assemble_scripts(self):
         """
-        Introduces install.do to install required STATA packages
+        Introduces install.do to install required STATA packages.
+
         Install to the SITE directory to make available in the image
         """
         scripts = []
@@ -153,8 +151,9 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
 
     def get_build_args(self):
         """
-        Return args to be set at build time. STATA_LICENSE is
-        required only at build time.
+        Return args to be set at build time.
+
+        STATA_LICENSE is required only at build time.
         """
         return super().get_build_args() + ["STATA_LICENSE_ENCODED"]
 
@@ -187,4 +186,3 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
             'xvfb',
             'xxd',
         }.union(super().get_base_packages())
-
