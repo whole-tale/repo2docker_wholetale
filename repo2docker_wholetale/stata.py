@@ -118,7 +118,6 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
                 r"""
                 mkdir -p /usr/local/stata/ado/plus && \
                 mkdir -p /usr/local/stata/ado/site && \
-                sleep 60 && \
                 printf "sysdir set SITE /usr/local/stata/ado/site\n"\
                 > /usr/local/stata/profile.do
                 """
@@ -139,7 +138,6 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
                 (
                     "root",
                     r"""
-                    ls /usr/local/stata && which stata &&\
                     echo ${{STATA_LICENSE_ENCODED}} | base64 -d > /usr/local/stata/stata.lic && \
                     /usr/local/stata/stata 'sysdir set PLUS /usr/local/stata/ado/site' < {} && \
                     rm /usr/local/stata/stata.lic
