@@ -1,0 +1,13 @@
+{
+  "config": {
+    "buildpack": "StataBuildPack",
+    "command": "xpra start-desktop --bind-tcp=0.0.0.0:10000 --html=on --daemon=no --exit-with-children=no --start=xfce4-session",
+    "environment": [
+      "VERSION=16"
+    ],
+    "port": 10000,
+    "targetMount": "/home/jovyan/work",
+    "urlPath": "/",
+    "user": "jovyan"
+  }
+}
