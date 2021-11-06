@@ -56,6 +56,15 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
                 r""" --mount=type=bind,target=/stata-install,source=/usr/local/stata/,from=stata-install:{stata_version} cp -r /stata-install/* /usr/local/stata""".format(stata_version=self.wt_env.get("VERSION", "16"))
             ),
             (
+                "root",
+                r"""
+                cd /tmp && \
+                wget -q https://launchpad.net/~ubuntu-security/+archive/ubuntu/ppa/+build/15108504/+files/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb && \
+                dpkg -i libpng12-0_1.2.54-1ubuntu1.1_amd64.deb && \
+                rm -rf /tmp/libpng12-0_1.2.54-1ubuntu1.1_amd64.deb
+                """  # See #28
+            ),
+            (
                 "${NB_USER}",
                 r"""
                 ${NB_PYTHON_PREFIX}/bin/pip install stata_kernel==1.10.5 && ${NB_PYTHON_PREFIX}/bin/python -m stata_kernel.install
