@@ -57,7 +57,7 @@ class WholeTaleBuildPack(BuildPack):
                 r"""
                 wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
                 && chmod a+x /usr/local/bin/reprozip \
-                && reprozip usage_report --disable
+                && LC_ALL=POSIX reprozip usage_report --disable
                 """
             )
         ]
@@ -178,7 +178,7 @@ class WholeTaleRBuildPack(RBuildPack):
                 r"""
                 wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
                 && chmod a+x /usr/local/bin/reprozip \
-                && reprozip usage_report --disable
+                && LC_ALL=POSIX reprozip usage_report --disable
                 """
             )
         ]
