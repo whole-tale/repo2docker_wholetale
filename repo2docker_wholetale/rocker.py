@@ -17,6 +17,10 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         FROM rocker/geospatial:{{ image_spec }}
         ENV DEBIAN_FRONTEND=noninteractive
 
+        # Buster used to be stable, but now it's not
+        RUN echo 'Acquire::AllowReleaseInfoChange::Suite "true";' > /etc/apt/apt.conf.d/01allow_releaseinfo_changes && \
+            echo 'Acquire::AllowReleaseInfoChange::Version "true";' >> /etc/apt/apt.conf.d/01allow_releaseinfo_changes
+
         # Curl used to download patched rstudio package
         RUN apt-get -qq update && \
         apt-get -qq install --yes --no-install-recommends curl > /dev/null && \
