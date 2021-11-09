@@ -49,19 +49,21 @@ class WholeTaleBuildPack(BuildPack):
         )
         return files
 
-
     def get_build_scripts(self):
+        # Install reprozip and dependencies in venv
         return super().get_build_scripts() + [
             (
                 "root",
                 r"""
-                wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
-                && chmod a+x /usr/local/bin/reprozip \
-                && reprozip usage_report --disable
+                apt-get update -y && \
+                apt-get install -y libsqlite3-dev python3-pip python3-venv python3-wheel && \
+                python3 -m venv /reprozip && \
+                . /reprozip/bin/activate && \
+                python3 -m pip install -U pip setuptools && \
+                pip3 install reprozip==1.0.16
                 """
             )
         ]
-
 
     def apt_assemble_script(self):
         if os.path.exists(self.binder_path("apt.txt")):
@@ -172,13 +174,17 @@ class WholeTaleRBuildPack(RBuildPack):
             return False
 
     def get_build_scripts(self):
+        # Install reprozip and dependencies in venv
         return super().get_build_scripts() + [
             (
                 "root",
                 r"""
-                wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
-                && chmod a+x /usr/local/bin/reprozip \
-                && reprozip usage_report --disable
+                apt-get update -y && \
+                apt-get install -y libsqlite3-dev python3-pip python3-venv python3-wheel && \
+                python3 -m venv /reprozip && \
+                . /reprozip/bin/activate && \
+                python3 -m pip install -U pip setuptools && \
+                pip3 install reprozip==1.0.16
                 """
             )
         ]
