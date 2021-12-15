@@ -1,11 +1,10 @@
 import os
-import json
 from .jupyter import JupyterWTStackBuildPack
 
 
 class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
     """
-    Setup Matlab for use with a repository
+    Setup Matlab for use with a repository.
 
     This sets up MATLAB, JupyterLab and the
     [matlab-kernel](https://github.com/Calysto/matlab_kernel
@@ -70,7 +69,9 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 r"""
                 wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
                 add-apt-repository "deb https://xpra.org/ bionic main" && \
-                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5 && \
+                mkdir -p /run/xpra && chmod 755 /run/xpra && \
+                mkdir -p /run/user/${NB_UID} && chown ${NB_UID} /run/user/${NB_UID} && chmod 700 /run/user/${NB_UID}
                 """,
             ),
             (
@@ -98,6 +99,53 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 "root",
                 r"""
                 cd /usr/local/MATLAB/*/extern/engines/python && python setup.py install
+                """,
+            ),
+            (
+                "root",
+                r"""
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  matlab-support && \
+                chown -R ${NB_USER}:${NB_USER} ${HOME}/.matlab
+                """,
+            ),
+            (
+                "${NB_USER}",
+                r"""
+                mkdir -p ${HOME}/Desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=MATLAB\n\
+                Comment=\n\
+                Exec=matlab –desktop\n\
+                Icon=matlab\n\
+                Path=${HOME}/work/workspace\n\
+                Terminal=true\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/MATLAB.desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=Terminal\n\
+                Comment=\n\
+                Exec=exo-open --launch TerminalEmulator\n\
+                Icon=utilities-terminal\n\
+                Path=${HOME}/work/workspace\n\
+                Terminal=false\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/Terminal.desktop && \
+                printf "[Desktop Entry]\n\
+                Version=1.0\n\
+                Type=Application\n\
+                Name=Firefox\n\
+                Comment=\n\
+                Exec=firefox %u\n\
+                Icon=firefox\n\
+                Path=\n\
+                Terminal=false\n\
+                StartupNotify=false\n"\
+                > ${HOME}/Desktop/Firefox.desktop && \
+                chmod +x ${HOME}/Desktop/*.desktop
                 """,
             )
         ]
@@ -219,4 +267,8 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             "g++",
             "gfortran",
             "csh",
+            'xubuntu-icon-theme',
+            'firefox',
+            'mousepad',
+            'xfce4',
         }.union(super().get_base_packages())
