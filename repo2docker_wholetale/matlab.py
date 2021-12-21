@@ -69,7 +69,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 r"""
                 wget -q https://xpra.org/gpg.asc -O- | apt-key add - && \
                 add-apt-repository "deb https://xpra.org/ bionic main" && \
-                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra xpra-html5 && \
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  xpra=4.2.3-r7-2 xpra-html5=4.5.1-r1046-1 && \
                 mkdir -p /run/xpra && chmod 755 /run/xpra && \
                 mkdir -p /run/user/${NB_UID} && chown ${NB_UID} /run/user/${NB_UID} && chmod 700 /run/user/${NB_UID}
                 """,
