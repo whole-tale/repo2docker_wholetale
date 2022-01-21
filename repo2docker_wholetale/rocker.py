@@ -149,7 +149,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             "WT_RSTUDIO_URL",
             (
                 "https://github.com/whole-tale/rstudio/releases/download/"
-                "v1.2.679-wt/rstudio-server-1.2.679-debian9-x86_64.deb"
+                "v1.4.1106-wt/rstudio-server-1.4.1106-bionic-amd64.deb"
             ),
         )
         rstudio_checksum = self.wt_env.get(
@@ -171,7 +171,8 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
                 echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
                 dpkg -i /tmp/rstudio.deb && \
-                rm /tmp/rstudio.deb
+                rm /tmp/rstudio.deb && \
+                chown rstudio:rstudio /var/lib/rstudio-server/rstudio.sqlite
                 """.format(
                     rstudio_url=rstudio_url, rstudio_checksum=rstudio_checksum
                 ),
