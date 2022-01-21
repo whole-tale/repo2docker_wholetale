@@ -27,6 +27,7 @@ class JupyterWTStackBuildPack(WholeTaleRBuildPack):
         files = {}
         for k, v in {
             "base/healthcheck.py": "/healthcheck.py",
+            "base/jupyter_notebook_config.py": "${HOME}/.jupyter/jupyter_notebook_config.py"
         }.items():
             files[os.path.join(os.path.dirname(__file__), k)] = v
 
