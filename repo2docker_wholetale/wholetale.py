@@ -15,6 +15,7 @@ from repo2docker.buildpacks.r import RBuildPack
 
 class WholeTaleBuildPack(BuildPack):
 
+    major_pythons = {"2": "2.7", "3": "3.8"}
     _wt_env = None
 
     def binder_path(self, path):
@@ -136,6 +137,8 @@ class WholeTaleBuildPack(BuildPack):
 
 
 class WholeTaleRBuildPack(RBuildPack):
+
+    major_pythons = {"2": "2.7", "3": "3.8"}
 
     def binder_path(self, path):
         """

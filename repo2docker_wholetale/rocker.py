@@ -7,6 +7,8 @@ import json
 import os
 import textwrap
 
+from distutils.version import LooseVersion as V
+
 from .wholetale import WholeTaleBuildPack
 
 
@@ -23,7 +25,11 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
 
         # Curl used to download patched rstudio package
         RUN apt-get -qq update && \
-        apt-get -qq install --yes --no-install-recommends curl > /dev/null && \
+        apt-get -qq install --yes --no-install-recommends \
+            {% for package in base_packages -%}
+            {{ package }} \
+            {% endfor -%}
+        > /dev/null && \
         apt-get -qq purge && \
         apt-get -qq clean && \
         rm -rf /var/lib/apt/lists/*
@@ -149,11 +155,11 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             "WT_RSTUDIO_URL",
             (
                 "https://github.com/whole-tale/rstudio/releases/download/"
-                "v1.2.679-wt/rstudio-server-1.2.679-debian9-x86_64.deb"
+                "v1.4.1106-wt/rstudio-server-1.4.1106-bionic-amd64.deb"
             ),
         )
         rstudio_checksum = self.wt_env.get(
-            "WT_RSTUDIO_MD5", "e9764a5246bccc5ff9e39b62aea148ff"
+            "WT_RSTUDIO_MD5", "1d2bbd588f9a3ac00580939d4812a7d1"
         )
 
         scripts = [
@@ -171,7 +177,8 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 curl --silent --location --fail {rstudio_url} > /tmp/rstudio.deb && \
                 echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
                 dpkg -i /tmp/rstudio.deb && \
-                rm /tmp/rstudio.deb
+                rm /tmp/rstudio.deb && \
+                chown rstudio:rstudio /var/lib/rstudio-server/rstudio.sqlite
                 """.format(
                     rstudio_url=rstudio_url, rstudio_checksum=rstudio_checksum
                 ),
@@ -208,6 +215,12 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             if assemble_script is not None
         ]
         return super().get_assemble_scripts() + assemble_scripts
+
+    def get_packages(self):
+        packages = ["curl"]
+        if V(self.wt_env.get("WT_ROCKER_VER", "3.5.1")) <= V("3.5.3"):
+            packages.append("libclang-dev")
+        return packages
 
     def get_path(self):
         """
@@ -260,6 +273,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             labels={},
             path=self.get_path(),
             env=self.get_env(),
+            base_packages=self.get_packages(),
             assemble_script_directives=assemble_script_directives,
             build_script_files=build_script_files,
             build_scripts=self.get_build_scripts(),
