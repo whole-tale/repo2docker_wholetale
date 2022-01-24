@@ -7,6 +7,8 @@ import json
 import os
 import textwrap
 
+from distutils.version import LooseVersion as V
+
 from .wholetale import WholeTaleBuildPack
 
 
@@ -23,7 +25,11 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
 
         # Curl used to download patched rstudio package
         RUN apt-get -qq update && \
-        apt-get -qq install --yes --no-install-recommends curl > /dev/null && \
+        apt-get -qq install --yes --no-install-recommends \
+            {% for package in base_packages -%}
+            {{ package }} \
+            {% endfor -%}
+        > /dev/null && \
         apt-get -qq purge && \
         apt-get -qq clean && \
         rm -rf /var/lib/apt/lists/*
@@ -210,6 +216,12 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
         ]
         return super().get_assemble_scripts() + assemble_scripts
 
+    def get_packages(self):
+        packages = ["curl"]
+        if V(self.wt_env.get("WT_ROCKER_VER", "3.5.1")) <= V("3.5.3"):
+            packages.append("libclang-dev")
+        return packages
+
     def get_path(self):
         """
         Return paths to be added to the PATH environment variable.
@@ -261,6 +273,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             labels={},
             path=self.get_path(),
             env=self.get_env(),
+            base_packages=self.get_packages(),
             assemble_script_directives=assemble_script_directives,
             build_script_files=build_script_files,
             build_scripts=self.get_build_scripts(),
