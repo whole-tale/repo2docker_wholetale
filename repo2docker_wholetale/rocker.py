@@ -159,7 +159,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
             ),
         )
         rstudio_checksum = self.wt_env.get(
-            "WT_RSTUDIO_MD5", "e9764a5246bccc5ff9e39b62aea148ff"
+            "WT_RSTUDIO_MD5", "1d2bbd588f9a3ac00580939d4812a7d1"
         )
 
         scripts = [
