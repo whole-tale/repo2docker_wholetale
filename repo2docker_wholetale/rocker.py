@@ -178,7 +178,7 @@ class RockerWTStackBuildPack(WholeTaleBuildPack):
                 echo '{rstudio_checksum} /tmp/rstudio.deb' | md5sum -c - && \
                 dpkg -i /tmp/rstudio.deb && \
                 rm /tmp/rstudio.deb && \
-                chown rstudio:rstudio /var/lib/rstudio-server/rstudio.sqlite
+                chown -R rstudio:rstudio /var/lib/rstudio-server
                 """.format(
                     rstudio_url=rstudio_url, rstudio_checksum=rstudio_checksum
                 ),
