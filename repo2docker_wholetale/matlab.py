@@ -147,6 +147,44 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 > ${HOME}/Desktop/Firefox.desktop && \
                 chmod +x ${HOME}/Desktop/*.desktop
                 """,
+            ),
+            (
+                "${NB_USER}",
+                r"""
+                mkdir -p ${HOME}/.config/xfce4/xfconf/xfce-perchannel-xml/ && \
+                printf "<?xml version='1.0' encoding='UTF-8'?> \
+                <channel name='xfce4-panel' version='1.0'> \
+                  <property name='configver' type='int' value='2'/> \
+                  <property name='panels' type='array'> \
+                    <value type='int' value='1'/> \
+                    <property name='panel-1' type='empty'> \
+                      <property name='position' type='string' value='p=8;x=720;y=750'/> \
+                      <property name='length' type='uint' value='100'/> \
+                      <property name='position-locked' type='bool' value='false'/> \
+                      <property name='size' type='uint' value='36'/> \
+                      <property name='plugin-ids' type='array'> \
+                        <value type='int' value='1'/> \
+                        <value type='int' value='3'/> \
+                        <value type='int' value='15'/> \
+                        <value type='int' value='6'/> \
+                      </property> \
+                      <property name='disable-struts' type='bool' value='false'/> \
+                      <property name='nrows' type='uint' value='1'/> \
+                      <property name='length-adjust' type='bool' value='true'/> \
+                    </property> \
+                  </property> \
+                  <property name='plugins' type='empty'> \
+                    <property name='plugin-1' type='string' value='applicationsmenu'/> \
+                    <property name='plugin-3' type='string' value='tasklist'/> \
+                    <property name='plugin-15' type='string' value='separator'> \
+                      <property name='expand' type='bool' value='true'/> \
+                      <property name='style' type='uint' value='0'/> \
+                    </property> \
+                    <property name='plugin-6' type='string' value='systray'/> \
+                  </property> \
+                </channel>\n" \
+                > ${HOME}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+                """,
             )
         ]
 
@@ -271,4 +309,6 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             'firefox',
             'mousepad',
             'xfce4',
+            'xfce4-goodies',
+            'xfce4-panel'
         }.union(super().get_base_packages())
