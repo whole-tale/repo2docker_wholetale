@@ -102,13 +102,6 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                 """,
             ),
             (
-                "root",
-                r"""
-                DEBIAN_FRONTEND=noninteractive apt-get install -y  matlab-support && \
-                chown -R ${NB_USER}:${NB_USER} ${HOME}/.matlab
-                """,
-            ),
-            (
                 "${NB_USER}",
                 r"""
                 mkdir -p ${HOME}/Desktop && \
@@ -184,6 +177,13 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
                   </property> \
                 </channel>\n" \
                 > ${HOME}/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
+                """,
+            ),
+            (
+                "root",
+                r"""
+                DEBIAN_FRONTEND=noninteractive apt-get install -y  matlab-support && \
+                chown -R ${NB_USER}:${NB_USER} ${HOME}/.matlab
                 """,
             )
         ]
