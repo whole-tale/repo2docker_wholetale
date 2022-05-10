@@ -18,6 +18,9 @@ class WholeTaleBuildPack(BuildPack):
     major_pythons = {"2": "2.7", "3": "3.8"}
     _wt_env = None
 
+    def get_build_args(self):
+        return {}
+
     def binder_path(self, path):
         """
         Locate a build file in a default dir.
@@ -50,7 +53,6 @@ class WholeTaleBuildPack(BuildPack):
         )
         return files
 
-
     def get_build_scripts(self):
         return super().get_build_scripts() + [
             (
@@ -59,10 +61,9 @@ class WholeTaleBuildPack(BuildPack):
                 wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
                 && chmod a+x /usr/local/bin/reprozip \
                 && LC_ALL=POSIX reprozip usage_report --disable
-                """
+                """,
             )
         ]
-
 
     def apt_assemble_script(self):
         if os.path.exists(self.binder_path("apt.txt")):
@@ -135,6 +136,24 @@ class WholeTaleBuildPack(BuildPack):
 
         shutil.rmtree(tempdir, ignore_errors=True)
 
+    def build(
+        self,
+        client,
+        image_spec,
+        memory_limit,
+        build_args,
+        cache_from,
+        extra_build_kwargs,
+    ):
+        if build_args:
+            for k, v in self.get_build_args().items():
+                build_args.setdefault(k, v)
+        else:
+            build_args = self.get_build_args()
+        yield from super().build(
+            client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs
+        )
+
 
 class WholeTaleRBuildPack(RBuildPack):
 
@@ -150,6 +169,9 @@ class WholeTaleRBuildPack(RBuildPack):
             if os.path.exists(possible_config_dir):
                 return os.path.join(possible_config_dir, path)
         return path
+
+    def get_build_args(self):
+        return {}
 
     def set_checkpoint_date(self):
         if not self.checkpoint_date:
@@ -181,6 +203,24 @@ class WholeTaleRBuildPack(RBuildPack):
                 wget -O /usr/local/bin/reprozip https://github.com/cirss/reprozip-static/releases/download/v1.0.16-r1/reprozip-1.016-linux-x86-64-static \
                 && chmod a+x /usr/local/bin/reprozip \
                 && LC_ALL=POSIX reprozip usage_report --disable
-                """
+                """,
             )
         ]
+
+    def build(
+        self,
+        client,
+        image_spec,
+        memory_limit,
+        build_args,
+        cache_from,
+        extra_build_kwargs,
+    ):
+        if build_args:
+            for k, v in self.get_build_args().items():
+                build_args.setdefault(k, v)
+        else:
+            build_args = self.get_build_args()
+        yield from super().build(
+            client, image_spec, memory_limit, build_args, cache_from, extra_build_kwargs
+        )

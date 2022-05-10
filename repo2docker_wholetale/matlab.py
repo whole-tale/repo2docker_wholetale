@@ -51,7 +51,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
         Return args to be set at build time. FILE_INSTALLATION_KEY is
         required only at build time.
         """
-        return super().get_build_args() + ["FILE_INSTALLATION_KEY"]
+        return super().get_build_args() | {"FILE_INSTALLATION_KEY": "some_key"}
 
     def get_build_scripts(self):
         """
