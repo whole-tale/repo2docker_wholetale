@@ -90,7 +90,7 @@ class MatlabWTStackBuildPack(JupyterWTStackBuildPack):
             (
                 "${NB_USER}",
                 r"""
-                ${{NB_PYTHON_PREFIX}}/bin/pip install matlab_kernel jupyter-matlab-proxy=={matlab_proxy_version}
+                ${{NB_PYTHON_PREFIX}}/bin/pip install ipykernel==5.5.6 metakernel==0.28.2 matlab_kernel==0.16.11 jupyter-matlab-proxy=={matlab_proxy_version}
                 """.format(
                     matlab_proxy_version=matlab_proxy_version
                 ),
