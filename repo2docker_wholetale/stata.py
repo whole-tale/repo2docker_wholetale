@@ -200,7 +200,7 @@ class StataWTStackBuildPack(JupyterWTStackBuildPack):
 
         STATA_LICENSE is required only at build time.
         """
-        return super().get_build_args() + ["STATA_LICENSE_ENCODED"]
+        return super().get_build_args() | {"STATA_LICENSE_ENCODED": "your_license"}
 
     def get_preassemble_script_files(self):
         files = super().get_preassemble_script_files()
