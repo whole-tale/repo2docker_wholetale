@@ -1,4 +1,4 @@
-FROM wholetale/repo2docker:2022.02.0-61-g393ca2c
+FROM craigwillis/repo2docker:update_2022_10_0
 
 COPY . /src
 RUN python3 -m pip install /src bdbag==1.6.1
