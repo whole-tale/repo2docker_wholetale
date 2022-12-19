@@ -1,4 +1,4 @@
-FROM wholetale/repo2docker:2022.02.0-61-g393ca2c
+FROM wholetale/repo2docker@sha256:d8f0fdf83adf278fd97059bf393c5d4d1bac98a759ff44e30af497059a5e45d3
 
 COPY . /src
 RUN python3 -m pip install /src bdbag==1.6.1
