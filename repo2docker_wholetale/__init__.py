@@ -9,6 +9,7 @@ from .openrefine import OpenRefineWTStackBuildPack
 from .rkernel import RJupyterWTStackBuildPack
 from .matlab import MatlabWTStackBuildPack
 from .stata import StataWTStackBuildPack
+from .julia import JuliaProjectWTBuildPack
 
 
 __author__ = """Kacper Kowalik"""
