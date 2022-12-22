@@ -43,7 +43,7 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url='https://github.com/whole-tale/repo2docker_wholetale',
-    version='1.1.post1',
+    version='1.2',
     zip_safe=False,
     entry_points={
         "repo2docker.engines": [
