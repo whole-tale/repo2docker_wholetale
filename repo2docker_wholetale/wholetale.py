@@ -11,6 +11,7 @@ import tempfile
 
 from repo2docker.buildpacks.base import BuildPack
 from repo2docker.buildpacks.r import RBuildPack
+from repo2docker.buildpacks.python import PythonBuildPack
 
 
 class WholeTaleBuildPack(BuildPack):
@@ -160,6 +161,14 @@ class WholeTaleRBuildPack(RBuildPack):
 
     def get_build_args(self):
         return {}
+
+    @property
+    def python_version(self):
+        """If environment.yaml is present, use PythonBuildPack's parent (conda) python_version"""
+        if self.environment_yaml:
+            return super(PythonBuildPack, self).python_version
+        else:
+            return super(RBuildPack, self).python_version
 
     def set_checkpoint_date(self):
         if not self.checkpoint_date:
